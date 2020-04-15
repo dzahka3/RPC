@@ -184,7 +184,7 @@ else()
   endif()
 endif()
 
-configure_file(src/config.h.in src/config.h)
+configure_file(${CMAKE_SOURCE_DIR}/eRPC-master/src/config.h.in ${CMAKE_SOURCE_DIR}/eRPC-master/src/config.h)
 
 # MICA sources
 set(MICA_SOURCES
