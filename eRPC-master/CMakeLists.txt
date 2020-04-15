@@ -17,12 +17,12 @@ set(LIBRARIES ${LIBRARIES} rt numa pthread gflags)
 enable_testing()
 find_package(GTest REQUIRED)
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party)
+include_directories(${CMAKE_SOURCE_DIR}/eRPC-master/src)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/eRPC-master/third_party)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
 
 # liberpc will be compiled unless profile-guided optimization or LTO is enabled
 set(COMPILE_ERPC_LIB ON)
@@ -32,9 +32,9 @@ set(COMPILE_ERPC_LIB ON)
 set(DPDK_NEEDED "false")
 
 # Options exposed to the user
-set(TRANSPORT "dpdk" CACHE STRING "Datapath transport (infiniband/raw/dpdk)")
+set(TRANSPORT "infiniband" CACHE STRING "Datapath transport (infiniband/raw/dpdk)")
 option(ROCE "Use RoCE if TRANSPORT is infiniband" OFF)
-option(PERF "Compile for performance" ON)
+option(PERF "Compile for performance" OFF)
 set(PGO "none" CACHE STRING "Profile-guided optimization (generate/use/none)")
 set(LOG_LEVEL "warn" CACHE STRING "Logging level (none/error/warn/info/reorder/trace/cc)") 
 cmake_dependent_option(LTO "Use link time optimization" ON "PERF" OFF)
@@ -47,7 +47,7 @@ if(PERF)
 else(PERF)
   message(STATUS "Compilation not optimized for performance.")
   set(DEBUG ON)
-  set(TESTING ON)
+  set(TESTING OFF)
 endif(PERF)
 
 # Profile-guided optimization
@@ -262,7 +262,7 @@ if(TESTING)
 endif()
 
 # The app to compile. Only one app is compiled to reduce compile time.
-if(EXISTS "${CMAKE_SOURCE_DIR}/scripts/autorun_app_file")
+if(EXISTS "${CMAKE_SOURCE_DIR}/eRPC-master/scripts/autorun_app_file")
   file(STRINGS "scripts/autorun_app_file" APP)
 else()
   message(STATUS "No autorun_app_file found. No application will be compiled.")
@@ -291,9 +291,9 @@ if(APP STREQUAL "smr")
   set(APP_ADDITIONAL_SOURCES ${MICA_SOURCES})
 elseif(APP STREQUAL "masstree_analytics")
   # CMake-based Masstree library from anujkaliaiitd/masstree-beta
-  link_directories(${CMAKE_SOURCE_DIR}/third_party/masstree-beta)
-  include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party/masstree-beta)
-  add_definitions(-include ${CMAKE_SOURCE_DIR}/third_party/masstree-beta/config.h)
+  link_directories(${CMAKE_SOURCE_DIR}/eRPC-master/third_party/masstree-beta)
+  include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/eRPC-master/third_party/masstree-beta)
+  add_definitions(-include ${CMAKE_SOURCE_DIR}/eRPC-master/third_party/masstree-beta/config.h)
   set(APP_ADDITIONAL_SOURCES
     apps/masstree_analytics/mt_index_api.cc
     mica/src/mica/util/cityhash/city_mod.cc)
